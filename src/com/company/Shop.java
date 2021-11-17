@@ -1,27 +1,33 @@
 package com.company;
 
+import com.company.Statistic.StatisticCollector;
+
 import java.util.concurrent.ExecutorService;
 
-public class Accountant extends Thread {
-    final int maxClients = 12;
+public class Shop extends Thread {
+    final int clients = 1000;
+    final int sleep = 1000;
     private ExecutorService executor;
     private Queue queue;
-    private int clients;
-    private Logs logs;
+    private int client;
+    private StatisticCollector statistic;
 
-    public Accountant(ExecutorService executor, Queue queue, Logs logs) {
+    public Shop(
+            ExecutorService executor,
+            Queue queue,
+            StatisticCollector statistic
+    ) {
         this.executor = executor;
         this.queue = queue;
-        this.logs = logs;
+        this.statistic = statistic;
     }
-
 
     @Override
     public void run() {
         while (!executor.isShutdown()) {
             try {
-                logs.addFuture(executor.submit(queue.take()));
-                if (++clients >= this.maxClients) {
+                statistic.addFuture(executor.submit(queue.take()));
+                if (++client >= this.clients) {
                     executor.shutdown();
                     break;
                 }
@@ -29,7 +35,7 @@ public class Accountant extends Thread {
         }
         while (!executor.isTerminated()) {
             try {
-                Thread.sleep(7000);
+                Thread.sleep(sleep);
             } catch (Exception e) {}
         }
     }

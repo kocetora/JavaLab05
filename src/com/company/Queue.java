@@ -1,22 +1,18 @@
 package com.company;
 
 public class Queue {
-    final int maxLength;
+    private final int threads;
     private int length;
     private int busy;
     private Pair head;
     private Pair tail;
 
-    public Queue (int maxLength) {
-        this.maxLength = maxLength;
-    }
-
-    public synchronized int getLength() {
-        return this.length;
+    public Queue (int threads) {
+        this.threads = threads;
     }
 
     public synchronized Client take() throws InterruptedException{
-        while (length == 0 || busy == this.maxLength) {
+        while (length == 0 || busy == threads) {
             wait();
         }
         Client client = head.getHead();
@@ -25,7 +21,6 @@ public class Queue {
         this.length--;
         return client;
     }
-
     public synchronized void put(Client client) {
         if (head == null) {
             head = new Pair(client);
@@ -37,7 +32,9 @@ public class Queue {
         this.length++;
         notifyAll();
     }
-
+    public synchronized int getLength() {
+        return this.length;
+    }
     public synchronized void free() {
         busy--;
         notifyAll();

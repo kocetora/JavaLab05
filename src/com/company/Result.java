@@ -8,11 +8,9 @@ public class Result {
         this.timePerClient = timePerClient;
         this.queueLength = queueLength;
     }
-
     public double getTime() {
         return timePerClient;
     }
-
     public int getQueueLength() {
         return queueLength;
     }
